@@ -3,8 +3,10 @@
 include_once '../util/init.php';
 include_once '../models/Font.php';
 
-$UPLOAD_DIR = 'src' . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR;
-$RELATIVE_UPLOAD_DIR = '..' . DIRECTORY_SEPARATOR . $UPLOAD_DIR;
+$DIR_SEPARATOR = '/';
+
+$UPLOAD_DIR = 'src' . $DIR_SEPARATOR . 'Assets' . $DIR_SEPARATOR;
+$RELATIVE_UPLOAD_DIR = '..' . $DIR_SEPARATOR . $UPLOAD_DIR;
 $FONT_FILE = 'fontFile';
 $FONT_TTF_MIMETYPE = 'font/ttf';
 
@@ -60,9 +62,10 @@ function createFont($FONT_FILE, $UPLOAD_DIR, $RELATIVE_UPLOAD_DIR, $FONT_TTF_MIM
         }
         if (file_exists($upload_relative_path)) {
             return file_validation_fail_response("font file already exists");
-        } else if ($_FILES[$FONT_FILE]["type"] != $FONT_TTF_MIMETYPE) {
-            return file_validation_fail_response("not a valid font file");
-        }
+        } 
+        // else if ($_FILES[$FONT_FILE]["type"] != $FONT_TTF_MIMETYPE) {
+        //     return file_validation_fail_response("not a valid font file");
+        // }
         move_uploaded_file($file_tmp_name, $upload_relative_path);
         $font = new Font($db);
         $font->fontName = $file_name;
@@ -100,7 +103,7 @@ function deleteFont($font_id, $db) {
         if ($font == null) {
             return not_found_response("font with id: " . $font_id . " not found");
         }
-        $font_file_relative_path = '..' . DIRECTORY_SEPARATOR . $font->filePath;
+        $font_file_relative_path = '../' . $font->filePath;
         if (file_exists($font_file_relative_path)) unlink($font_file_relative_path);
         $font->delete($font_id);
         return array(
